@@ -1,25 +1,42 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useTilt } from "../hooks/useTilt"
+
+const ROTATE_MS = 4200
 
 /**
  * A piece shown as a specimen on the sheet: the photo with a title block under
- * it, and its real width dimensioned below the plate. The plate leans towards
- * the pointer and catches a light spot where the pointer is; it flips to the
- * description on hover, on tap and on keyboard focus, and the magnifier in the
- * corner opens the full plate.
+ * it, and its real width dimensioned below the plate. The plate is shaped to
+ * its own photo's aspect ratio rather than a fixed box, so nothing gets
+ * cropped to fit. Where a job has more than one photo, the plate cycles
+ * between them — a sheet counter ("1/2") in the corner doubles as a manual
+ * advance. The plate leans towards the pointer and catches a light spot where
+ * the pointer is; it flips to the description on hover, on tap and on
+ * keyboard focus, and the magnifier in the corner opens the full plate.
  */
 export default function FlipCard({ item, index = 0, onOpen }) {
   const [flipped, setFlipped] = useState(false)
   const [loaded, setLoaded] = useState(false)
+  const [active, setActive] = useState(0)
   const tilt = useTilt(6)
+  const multi = item.images.length > 1
 
   // Pointer events cover a cursor dragged across the grid; touch is left to
   // the click toggle so a tap does not flip and immediately unflip.
   const enter = (e) => e.pointerType !== "touch" && setFlipped(true)
   const leave = (e) => e.pointerType !== "touch" && setFlipped(false)
 
+  // Auto-rotate between a job's photos, but only while the front is showing
+  // and reduced motion isn't requested — reading the description shouldn't
+  // compete with a photo changing underneath it.
+  useEffect(() => {
+    if (!multi || flipped) return
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
+    const id = setInterval(() => setActive((i) => (i + 1) % item.images.length), ROTATE_MS)
+    return () => clearInterval(id)
+  }, [multi, flipped, item.images.length])
+
   return (
-    <figure className="m-0" data-reveal="up" style={{ "--d": `${(index % 3) * 90}ms` }}>
+    <figure className="mb-10 break-inside-avoid" data-reveal="up" style={{ "--d": `${(index % 3) * 90}ms` }}>
       <div
         ref={tilt.ref}
         className="plate relative"
@@ -34,7 +51,8 @@ export default function FlipCard({ item, index = 0, onOpen }) {
         }}
       >
         <div
-          className="flip-card aspect-[4/3] w-full cursor-pointer"
+          className="flip-card w-full cursor-pointer"
+          style={{ aspectRatio: item.aspect }}
           data-flipped={flipped}
           role="button"
           tabIndex={0}
@@ -53,18 +71,23 @@ export default function FlipCard({ item, index = 0, onOpen }) {
         >
           <div className="flip-card-inner">
             <div className="flip-face bg-card">
-              {/* The photo eases in once it actually has pixels, instead of
-                  popping in mid-scroll — a plate settling, not a page jump. */}
-              <img
-                src={item.image}
-                alt={item.title}
-                loading="lazy"
-                decoding="async"
-                onLoad={() => setLoaded(true)}
-                className={`size-full object-cover transition-opacity duration-500 ease-out ${
-                  loaded ? "opacity-100" : "opacity-0"
-                }`}
-              />
+              {/* The stack fades in once it has pixels, instead of popping in
+                  mid-scroll; each photo within it crossfades on rotation. */}
+              <div className={`relative size-full transition-opacity duration-500 ${loaded ? "opacity-100" : "opacity-0"}`}>
+                {item.images.map((src, i) => (
+                  <img
+                    key={src}
+                    src={src}
+                    alt={i === 0 ? item.title : ""}
+                    loading="lazy"
+                    decoding="async"
+                    onLoad={i === 0 ? () => setLoaded(true) : undefined}
+                    className={`absolute inset-0 size-full object-cover transition-opacity duration-700 ease-out ${
+                      i === active ? "opacity-100" : "opacity-0"
+                    }`}
+                  />
+                ))}
+              </div>
               {/* Title block, as on a drawing: what it is, what it is made of. */}
               <div className="absolute inset-x-0 bottom-0 grid grid-cols-[1fr_auto] items-center gap-3 border-t border-ink bg-card px-3 py-2">
                 <h3 className="truncate font-semibold">{item.title}</h3>
@@ -75,7 +98,7 @@ export default function FlipCard({ item, index = 0, onOpen }) {
             <div className="flip-face flip-face-back bg-ink text-cream">
               <div
                 className="absolute inset-0 scale-100 bg-cover bg-center opacity-[0.18] transition-transform duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)] [.plate:hover_&]:scale-110"
-                style={{ backgroundImage: `url(${item.image})` }}
+                style={{ backgroundImage: `url(${item.images[active]})` }}
                 aria-hidden="true"
               />
               <div className="absolute inset-0 bg-gradient-to-b from-ink/75 to-ink/95" aria-hidden="true" />
@@ -96,6 +119,21 @@ export default function FlipCard({ item, index = 0, onOpen }) {
           <span />
           <span />
         </div>
+
+        {/* Sheet counter, doubling as a manual advance — the drafting-set
+            convention ("1/2") for a job shown across more than one photo. A
+            sibling of .flip-card, like the magnifier, so it isn't mirrored
+            when the card flips. */}
+        {multi && (
+          <button
+            type="button"
+            onClick={() => setActive((i) => (i + 1) % item.images.length)}
+            aria-label={`Прикажи ја следната слика (${active + 1} од ${item.images.length})`}
+            className="num absolute top-2 left-2 z-10 border border-ink bg-card/90 px-2 py-1 text-note text-ink backdrop-blur transition-colors hover:bg-ink hover:text-cream"
+          >
+            {active + 1}/{item.images.length}
+          </button>
+        )}
 
         <button
           type="button"

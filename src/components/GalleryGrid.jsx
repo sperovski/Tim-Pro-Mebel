@@ -51,7 +51,12 @@ export default function GalleryGrid() {
         })}
       </div>
 
-      <div className="grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+      {/* Columns, not a grid: every plate keeps its own photo's proportions
+          rather than being cropped into a shared box, so the cards run
+          different heights and need to flow like a cut list, not align row
+          by row. Each card supplies its own bottom margin and refuses to
+          split across a column break (both set in FlipCard's figure). */}
+      <div className="columns-1 gap-x-6 sm:columns-2 lg:columns-3">
         {shown.map((item, i) => (
           /* Keying on filter as well as id remounts the cards when the filter
              changes, so the reveal runs again for the new set. */
