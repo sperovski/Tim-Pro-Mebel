@@ -5,13 +5,15 @@ const featured = galleryItems.filter((item) => item.featured)
 /**
  * Three pieces, shown the size the work deserves — alternating sides,
  * generous margins, the full description instead of a caption. This is the
- * one place on the page spending real space on a single photograph; the
- * grid further down is for browsing everything else.
+ * one place on the page spending real space on a single photograph; the grid
+ * right after it (GalleryGrid, no other section between them) is for
+ * browsing everything else.
  */
 export default function Featured() {
   return (
-    <section aria-label="Избрани работи" className="wrap py-4 sm:py-8">
-      <div className="flex flex-col gap-20 sm:gap-28">
+    <section className="wrap py-16 sm:py-24">
+      <h2 className="heading text-h2">Избрани работи.</h2>
+      <div className="mt-14 flex flex-col gap-20 sm:mt-16 sm:gap-28">
         {featured.map((item, i) => {
           const reverse = i % 2 === 1
           return (

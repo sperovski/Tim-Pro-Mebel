@@ -34,7 +34,11 @@ export default function GalleryGrid() {
         </div>
       </div>
 
-      <div className="mt-10 columns-1 gap-x-8 sm:columns-2 lg:columns-3">
+      {/* A proper grid, not a masonry flow — every card is the same shape
+          (see WorkCard's CARD_ASPECT), so rows line up across all three
+          columns instead of drifting into a scattered stack of different
+          heights. */}
+      <div className="mt-10 grid grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
         {shown.map((item, i) => (
           /* Keying on filter as well as id remounts the cards when the filter
              changes. */

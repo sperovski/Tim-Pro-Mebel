@@ -15,8 +15,8 @@ export default function App() {
       <main id="content">
         <Hero />
         <Featured />
-        <Process />
         <GalleryGrid />
+        <Process />
         <About />
         <Faq />
         <ContactForm />

@@ -2,11 +2,19 @@ import { useEffect, useState } from "react"
 
 const ROTATE_MS = 3400
 
+// One shared shape for every card in the grid. Natural per-photo aspect
+// ratios (used in the Featured rows, where each photo is its own standalone
+// moment) look like clutter once you repeat seventeen of them side by side —
+// a gallery wall reads as considered because the frames match; this crops far
+// less than the original 4:3 landscape box did (that showed as little as a
+// third of a tall photo), but it does crop, in exchange for rows that align.
+const CARD_ASPECT = "3/5"
+
 /**
- * A finished piece, shown at its own photo's proportions — nothing is
- * cropped to fit a shared box. Where a job has more than one photo it
- * rotates quietly between them; a small plate number in the corner ("1/2")
- * doubles as a manual advance. The whole frame opens the lightbox; the
+ * A finished piece, in a frame the same size as every other card's. Where a
+ * job has more than one photo it rotates quietly between them; a small plate
+ * number in the corner ("1/2") doubles as a manual advance. The whole frame
+ * opens the lightbox — the one place a piece is shown uncropped — and the
  * caption underneath is always legible, not hidden behind a hover.
  */
 export default function WorkCard({ item, onOpen }) {
@@ -22,7 +30,7 @@ export default function WorkCard({ item, onOpen }) {
   }, [multi, item.images.length])
 
   return (
-    <figure className="mb-9 break-inside-avoid">
+    <figure>
       <div className="relative">
         <button
           type="button"
@@ -32,7 +40,7 @@ export default function WorkCard({ item, onOpen }) {
         >
           <div
             className={`relative overflow-hidden bg-linen transition-opacity duration-500 ${loaded ? "opacity-100" : "opacity-0"}`}
-            style={{ aspectRatio: item.aspect }}
+            style={{ aspectRatio: CARD_ASPECT }}
           >
             {item.images.map((src, i) => (
               <img
