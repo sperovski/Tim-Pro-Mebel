@@ -1,8 +1,6 @@
 import Navbar from "./components/Navbar"
 import Hero from "./components/Hero"
-import Stats from "./components/Stats"
 import Process from "./components/Process"
-import MaterialsMarquee from "./components/MaterialsMarquee"
 import GalleryGrid from "./components/GalleryGrid"
 import About from "./components/About"
 import Faq from "./components/Faq"
@@ -19,9 +17,7 @@ export default function App() {
       <Navbar />
       <main id="content">
         <Hero />
-        <Stats />
         <Process />
-        <MaterialsMarquee />
         <GalleryGrid />
         <About />
         <Faq />
