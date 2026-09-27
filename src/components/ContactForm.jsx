@@ -30,7 +30,7 @@ export default function ContactForm() {
         )}&body=${encodeURIComponent(body)}`
         setState("sent")
         timers.current.push(setTimeout(() => setState("idle"), 3200))
-      }, 500),
+      }, 650),
     )
   }
 
@@ -47,19 +47,26 @@ export default function ContactForm() {
   ]
 
   return (
-    <section id="contact" className="bg-walnut py-20 text-cream sm:py-28">
-      <div className="wrap">
-        <h2 className="heading max-w-2xl text-h2">Кажете ни која просторија ја средувате.</h2>
-        <p className="prose-measure mt-5 text-body text-cream/70">
+    /* The sheet's title block: where a drawing states who made it and how to reach them. */
+    <section id="contact" className="border-t border-ink bg-ink text-cream">
+      <div className="sheet py-16 lg:py-24">
+        <h2 className="headline max-w-2xl text-title sm:text-display" data-reveal="up">
+          Кажете ни која просторија ја средувате.
+        </h2>
+        <p className="prose-measure mt-5 text-cream/75" data-reveal="up" style={{ "--d": "90ms" }}>
           Оставете број и кратко што ви треба. Се јавуваме за термин, а мерењето на терен е бесплатно.
         </p>
 
-        <div className="mt-12 grid gap-12 lg:grid-cols-[7fr_5fr] lg:gap-16">
-          <form onSubmit={handleSubmit}>
-            <div className="grid gap-6 sm:grid-cols-2">
-              {fields.map((field) => (
-                <label className="block" key={field.id}>
-                  <span className="mb-2 block text-meta text-cream/60">{field.label}</span>
+        <div
+          className="mt-10 grid gap-px border border-cream/25 bg-cream/25 lg:grid-cols-[7fr_5fr]"
+          data-reveal="up"
+          style={{ "--d": "160ms" }}
+        >
+          <form onSubmit={handleSubmit} className="bg-ink p-6 sm:p-8">
+            <div className="grid gap-4 sm:grid-cols-2">
+              {fields.map((field, i) => (
+                <label className="block" key={field.id} data-reveal="up" style={{ "--d": `${200 + i * 70}ms` }}>
+                  <span className="mb-1.5 block text-note text-cream/70">{field.label}</span>
                   <input
                     id={field.id}
                     type={field.type}
@@ -72,12 +79,17 @@ export default function ContactForm() {
               ))}
             </div>
 
-            <label className="mt-6 block">
-              <span className="mb-2 block text-meta text-cream/60">Што ви треба</span>
+            <label className="mt-4 block" data-reveal="up" style={{ "--d": "340ms" }}>
+              <span className="mb-1.5 flex items-baseline justify-between gap-3 text-note text-cream/70">
+                Што ви треба
+                <span className={`num transition-opacity duration-300 ${form.message ? "opacity-70" : "opacity-0"}`}>
+                  {form.message.length} знаци
+                </span>
+              </span>
               <textarea
                 id="contact-message"
                 required
-                rows={4}
+                rows={5}
                 value={form.message}
                 onChange={update("message")}
                 placeholder="На пример: кујна од 3,2 метри со горни елементи, стан во Аеродром."
@@ -85,18 +97,50 @@ export default function ContactForm() {
               />
             </label>
 
-            <button type="submit" disabled={state !== "idle"} aria-live="polite" className="btn btn-solid mt-8 w-full sm:w-auto">
-              {state === "sent" ? "Подготвено за праќање" : state === "sending" ? "Се подготвува…" : "Испратете барање"}
+            {/* The one animated edge on the sheet: a conic sweep round the
+                submit border, a travelling kerf while it works, and a
+                checkmark that draws itself once the mail client is handed the
+                message. */}
+            <button
+              type="submit"
+              disabled={state !== "idle"}
+              aria-live="polite"
+              className="btn-conic mt-6 inline-flex w-full text-cream sm:w-auto"
+            >
+              <span className={`relative overflow-hidden ${state === "sending" ? "kerf" : ""}`}>
+                {state === "sent" ? (
+                  <>
+                    <svg viewBox="0 0 16 16" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+                      <path className="check-draw" pathLength="1" d="m3 8.5 3.2 3.2L13 5" />
+                    </svg>
+                    Подготвено за праќање
+                  </>
+                ) : state === "sending" ? (
+                  "Се подготвува…"
+                ) : (
+                  <>
+                    Испратете барање
+                    <svg viewBox="0 0 16 16" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                      <path d="M2.5 8h11M9.5 4l4 4-4 4" />
+                    </svg>
+                  </>
+                )}
+              </span>
             </button>
-            <p className="mt-4 text-meta text-cream/45">
+            <p className="mt-3 text-note text-cream/55">
               Барањето се отвора во вашиот е-мејл клиент, подготвено за праќање.
             </p>
           </form>
 
-          <dl>
-            {rows.map(([label, value, href]) => (
-              <div key={label} className="flex items-baseline justify-between gap-4 border-b border-cream/15 py-4 first:border-t">
-                <dt className="text-meta text-cream/55">{label}</dt>
+          <dl className="bg-ink">
+            {rows.map(([label, value, href], i) => (
+              <div
+                key={label}
+                className="group flex items-baseline justify-between gap-4 border-b border-cream/20 px-6 py-4 transition-colors duration-300 last:border-0 hover:bg-cream/5 sm:px-8"
+                data-reveal="left"
+                style={{ "--d": `${220 + i * 70}ms` }}
+              >
+                <dt className="text-note text-cream/60">{label}</dt>
                 <dd className="text-right">
                   {href ? (
                     <a

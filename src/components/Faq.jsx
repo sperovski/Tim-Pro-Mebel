@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-/* Answers are the ones already given elsewhere on this page — the process
+/* Answers are the ones already given elsewhere on this sheet — the process
    section, the workshop copy and the materials in the gallery — collected
    where a visitor goes looking for them. */
 const questions = [
@@ -27,39 +27,41 @@ const questions = [
 ]
 
 export default function Faq() {
-  // One question open at a time.
+  // One question open at a time: the sheet stays a readable length.
   const [open, setOpen] = useState(0)
 
   return (
-    <section id="faq" className="wrap py-20 sm:py-28">
-      <div className="grid gap-10 lg:grid-cols-[4fr_7fr] lg:gap-20">
+    <section id="faq" className="border-t border-ink/20 bg-cream">
+      <div className="sheet grid gap-10 py-16 lg:grid-cols-[4fr_7fr] lg:gap-20 lg:py-24">
         <div>
-          <h2 className="heading text-h2">Прашања пред мерењето.</h2>
-          <p className="prose-measure mt-5 text-body text-walnut-soft">
+          <h2 className="headline text-title sm:text-display" data-reveal="up">
+            Прашања пред мерењето.
+          </h2>
+          <p className="prose-measure mt-5 text-note text-ink/70" data-reveal="up" style={{ "--d": "80ms" }}>
             Ако вашето прашање не е тука, оставете број подолу и ќе одговориме по телефон.
           </p>
         </div>
 
-        <div>
+        <div className="frame-soft divide-y divide-ink/15" data-reveal="right">
           {questions.map((item, i) => {
             const isOpen = open === i
             return (
-              <div key={item.q} data-open={isOpen} className="border-b border-walnut/10 first:border-t">
+              <div key={item.q} data-open={isOpen}>
                 <h3>
                   <button
                     type="button"
                     onClick={() => setOpen(isOpen ? -1 : i)}
                     aria-expanded={isOpen}
                     aria-controls={`faq-answer-${i}`}
-                    className="group flex w-full items-center justify-between gap-6 py-5 text-left"
+                    className="group flex w-full items-center justify-between gap-6 px-4 py-4 text-left font-semibold transition-colors hover:text-cinnamon sm:px-6"
                   >
-                    <span className="font-serif text-lede text-walnut group-hover:text-brass">{item.q}</span>
-                    <span className="fold-mark shrink-0 text-walnut-soft" aria-hidden="true" />
+                    {item.q}
+                    <span className="fold-mark" aria-hidden="true" />
                   </button>
                 </h3>
                 <div className="fold" data-open={isOpen} id={`faq-answer-${i}`} role="region">
                   <div>
-                    <p className="prose-measure pb-6 text-body text-walnut-soft">{item.a}</p>
+                    <p className="prose-measure px-4 pb-5 text-note text-ink/75 sm:px-6">{item.a}</p>
                   </div>
                 </div>
               </div>
