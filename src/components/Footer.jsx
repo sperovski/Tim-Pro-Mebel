@@ -8,7 +8,7 @@ export default function Footer() {
           {/* The flat caramel mark: the gradient version reads too close to
               this dark ground, so the footer gets the light variant. */}
           <img src="/logo-mark-light.png" alt="" aria-hidden="true" className="h-5 w-auto" />
-          Tim ProMebel — мебел по мерка
+          Tim ProMebel, мебел по мерка
         </p>
         <div className="flex items-center gap-5">
           <a href={`tel:${contact.phoneHref}`} className="num link-draw">

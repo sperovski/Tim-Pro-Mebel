@@ -68,7 +68,7 @@ export default function FlipCard({ item, index = 0, onOpen }) {
           role="button"
           tabIndex={0}
           aria-pressed={flipped}
-          aria-label={`${item.title} — ${flipped ? "сокриј опис" : "прикажи опис"}`}
+          aria-label={`${item.title}, ${flipped ? "сокриј опис" : "прикажи опис"}`}
           onPointerEnter={enter}
           onClick={() => setFlipped((v) => !v)}
           onFocus={() => setFlipped(true)}

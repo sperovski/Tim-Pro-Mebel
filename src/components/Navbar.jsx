@@ -67,10 +67,16 @@ export default function Navbar() {
             aria-hidden="true"
             className={`w-auto transition-[height] duration-300 ease-out ${scrolled ? "h-7" : "h-8"}`}
           />
-          <span className="flex items-baseline gap-2.5">
+          {/* items-center, not items-baseline: the tagline collapses with
+              overflow-hidden, and a box with overflow other than visible
+              takes its bottom edge as its baseline — on a baseline row that
+              dragged the wordmark up out of the header on scroll.
+              whitespace-nowrap stops the tagline wrapping inside its own
+              zero-width box while it collapses. */}
+          <span className="flex items-center gap-2.5">
             <span className="font-extrabold tracking-tight">Tim ProMebel</span>
             <span
-              className={`hidden text-note font-normal text-ink/55 transition-all duration-300 sm:inline ${
+              className={`hidden whitespace-nowrap text-note font-normal text-ink/55 transition-all duration-300 sm:block ${
                 scrolled ? "max-w-0 overflow-hidden opacity-0" : "max-w-40 opacity-100"
               }`}
             >

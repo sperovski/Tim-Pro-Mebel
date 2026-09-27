@@ -20,7 +20,7 @@ export default function ContactForm() {
     if (state !== "idle") return
     setState("sending")
 
-    const subject = `Барање за мерење — ${form.name || "веб-страница"}`
+    const subject = `Барање за мерење од ${form.name || "веб-страница"}`
     const body = `Име: ${form.name}\nТелефон: ${form.phone}\n\n${form.message}`
 
     timers.current.push(
