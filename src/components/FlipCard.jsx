@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useTilt } from "../hooks/useTilt"
 
-const ROTATE_MS = 4200
+const ROTATE_MS = 3200
 
 /**
  * A piece shown as a specimen on the sheet: the photo with a title block under
@@ -25,15 +25,18 @@ export default function FlipCard({ item, index = 0, onOpen }) {
   const enter = (e) => e.pointerType !== "touch" && setFlipped(true)
   const leave = (e) => e.pointerType !== "touch" && setFlipped(false)
 
-  // Auto-rotate between a job's photos, but only while the front is showing
-  // and reduced motion isn't requested — reading the description shouldn't
-  // compete with a photo changing underneath it.
+  // Auto-rotate between a job's photos. This runs regardless of hover/flip:
+  // the card flips to its description on the same hover that would otherwise
+  // gate rotation, so pausing it there meant a card almost never got to
+  // rotate while anyone was actually looking at it. It keeps advancing
+  // quietly behind a flipped card too, so un-flipping can reveal a different
+  // photo — reduced motion is the only thing that stops it.
   useEffect(() => {
-    if (!multi || flipped) return
+    if (!multi) return
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
     const id = setInterval(() => setActive((i) => (i + 1) % item.images.length), ROTATE_MS)
     return () => clearInterval(id)
-  }, [multi, flipped, item.images.length])
+  }, [multi, item.images.length])
 
   return (
     <figure className="mb-10 break-inside-avoid" data-reveal="up" style={{ "--d": `${(index % 3) * 90}ms` }}>
@@ -79,7 +82,11 @@ export default function FlipCard({ item, index = 0, onOpen }) {
                     key={src}
                     src={src}
                     alt={i === 0 ? item.title : ""}
-                    loading="lazy"
+                    // Only the first photo is lazy; the rest of a rotating
+                    // card's photos are small and few (two extra at most,
+                    // site-wide) and load eagerly so the interval never
+                    // reveals a still-blank image mid-crossfade.
+                    loading={i === 0 ? "lazy" : "eager"}
                     decoding="async"
                     onLoad={i === 0 ? () => setLoaded(true) : undefined}
                     className={`absolute inset-0 size-full object-cover transition-opacity duration-700 ease-out ${
