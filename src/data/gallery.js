@@ -18,6 +18,9 @@
 //
 // `category` drives the gallery filter; the keys are defined in `categories`
 // at the bottom of this file.
+//
+// `featured: true` marks the three pieces shown large in "Избрани работи"
+// before the full gallery — picked for variety of room type, not order.
 
 export const galleryItems = [
   // — Кујни —
@@ -45,6 +48,7 @@ export const galleryItems = [
   },
   {
     id: "kujna-lak-lajsna",
+    featured: true,
     category: "kujni",
     images: ["/gallery/03-kujna-lak-lajsna.jpg"],
     aspect: "1050/1400",
@@ -128,6 +132,7 @@ export const galleryItems = [
     // Same bedroom, two pieces — the vanity's mirror reflects this bed's own
     // headboard, so it goes on one card instead of two.
     id: "spalna-boucle",
+    featured: true,
     category: "sobi",
     images: ["/gallery/10-krevet-boucle.jpg", "/gallery/11-toaletna-masichka.jpg"],
     aspect: "1050/1400",
@@ -175,6 +180,7 @@ export const galleryItems = [
   },
   {
     id: "biblioteka",
+    featured: true,
     category: "ostanato",
     images: ["/gallery/16-biblioteka.jpg"],
     aspect: "1050/1400",

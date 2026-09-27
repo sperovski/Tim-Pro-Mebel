@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from "react"
 
 /**
- * The plate taken off the sheet and held up: the photo at full size with its
- * title block and dimension beside it. Where a job has more than one photo,
- * small swatches pick which one is enlarged, separate from the arrows, which
- * step between jobs. Closes on Escape, on the backdrop and on the close
- * control, and hands focus back to the card that opened it.
+ * The piece held up at full size, with its full description and — where a
+ * job has more than one photo — small swatches to pick between them. Closes
+ * on Escape, on the backdrop and on the close control, and hands focus back
+ * to the card that opened it.
  */
 export default function Lightbox({ item, onClose, onStep }) {
   const closeRef = useRef(null)
@@ -16,8 +15,8 @@ export default function Lightbox({ item, onClose, onStep }) {
   useEffect(() => setShown(0), [item.id])
 
   // The handlers are rebuilt by the parent on every step; keeping them in a
-  // ref lets the key listener and the focus move run once, on open, instead of
-  // tearing down and stealing focus back on each arrow press.
+  // ref lets the key listener and the focus move run once, on open, instead
+  // of tearing down and stealing focus back on each arrow press.
   const handlers = useRef({ onClose, onStep })
   handlers.current = { onClose, onStep }
 
@@ -29,7 +28,6 @@ export default function Lightbox({ item, onClose, onStep }) {
     }
     document.addEventListener("keydown", onKey)
 
-    // Stop the sheet behind from scrolling while the plate is held up.
     const previous = document.body.style.overflow
     document.body.style.overflow = "hidden"
 
@@ -39,7 +37,6 @@ export default function Lightbox({ item, onClose, onStep }) {
     return () => {
       document.removeEventListener("keydown", onKey)
       document.body.style.overflow = previous
-      // Hand focus back to the card that opened the plate.
       if (opener instanceof HTMLElement) opener.focus()
     }
   }, [])
@@ -57,18 +54,16 @@ export default function Lightbox({ item, onClose, onStep }) {
         type="button"
         aria-label="Затвори"
         onClick={onClose}
-        className="ink-in absolute inset-0 cursor-zoom-out bg-ink/80 backdrop-blur-sm"
+        className="fade-in absolute inset-0 cursor-zoom-out bg-walnut/85"
         style={{ animationDuration: "0.25s" }}
       />
 
-      <div
-        className="pop-in relative grid max-h-full w-full max-w-5xl overflow-auto border border-cream/30 bg-card lg:grid-cols-[7fr_4fr]"
-      >
-        <div className="relative bg-paper">
+      <div className="rise relative grid max-h-full w-full max-w-5xl overflow-auto bg-linen lg:grid-cols-[7fr_5fr]">
+        <div className="relative bg-oak/20">
           <img src={item.images[shown]} alt={item.title} className="h-full w-full object-cover" />
 
           {multi && (
-            <div className="absolute bottom-3 left-3 flex gap-1.5">
+            <div className="absolute bottom-4 left-4 flex gap-2">
               {item.images.map((src, i) => (
                 <button
                   key={src}
@@ -76,30 +71,26 @@ export default function Lightbox({ item, onClose, onStep }) {
                   onClick={() => setShown(i)}
                   aria-label={`Слика ${i + 1} од ${item.images.length}`}
                   aria-current={i === shown}
-                  className={`size-2.5 border border-cream transition-colors ${
-                    i === shown ? "bg-cream" : "bg-ink/40 hover:bg-cream/70"
-                  }`}
+                  className={`h-1 w-8 transition-colors ${i === shown ? "bg-cream" : "bg-cream/35 hover:bg-cream/60"}`}
                 />
               ))}
             </div>
           )}
         </div>
 
-        <div className="flex flex-col gap-5 border-t border-ink/20 p-6 sm:p-8 lg:border-t-0 lg:border-l">
+        <div className="flex flex-col gap-6 p-7 sm:p-9">
           <div>
-            <p className="text-note tracking-[0.1em] text-cinnamon uppercase">{item.material}</p>
-            <h3 className="headline mt-2 text-title">{item.title}</h3>
+            <p className="text-meta text-brass">{item.material}</p>
+            <h3 className="heading mt-2 text-h2">{item.title}</h3>
           </div>
 
-          <p className="text-note leading-relaxed text-ink/80">{item.description}</p>
+          <p className="text-body leading-relaxed text-walnut-soft">{item.description}</p>
 
-          <div className="dim mt-auto">
-            <span className="dim-line dim-line--start" />
-            <span className="num">{item.width} мм</span>
-            <span className="dim-line dim-line--end" />
-          </div>
+          {item.width && (
+            <p className="num text-meta text-walnut-soft/75">Ширина {item.width} мм</p>
+          )}
 
-          <div className="flex items-center gap-2">
+          <div className="mt-auto flex items-center gap-2 pt-4">
             <button type="button" onClick={() => onStep(-1)} aria-label="Претходна изработка" className="btn btn-line px-3 py-2">
               <svg viewBox="0 0 16 16" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
                 <path d="M10 13 5 8l5-5" />
@@ -110,7 +101,7 @@ export default function Lightbox({ item, onClose, onStep }) {
                 <path d="M6 3l5 5-5 5" />
               </svg>
             </button>
-            <button ref={closeRef} type="button" onClick={onClose} className="btn btn-line ml-auto px-4 py-2 text-note">
+            <button ref={closeRef} type="button" onClick={onClose} className="btn btn-line ml-auto">
               Затвори
             </button>
           </div>
