@@ -1,107 +1,211 @@
 // Gallery content for Tim ProMebel.
 //
-// Photos come from the company's Facebook page:
-// https://www.facebook.com/people/Tim-ProMebel/100077423180264/?sk=photos
-// Facebook blocks automated downloads, so save each photo by hand into
-// /public/gallery/ and point `image` at it. The .svg files referenced below
-// are placeholders so the site runs.
-//
-// `width` is the piece's real width in millimetres and is printed on the card
-// as a dimension line — replace the drafts with the actual figures.
+// Photos are real completed jobs, saved in /public/gallery/ (see the README
+// there for how they're processed). `width` is the piece's width in
+// millimetres, printed on the card as a dimension line — these are drafted
+// estimates by eye, not measurements, so replace them with the real figures
+// once they're on hand.
 //
 // `category` drives the gallery filter; the keys are defined in `categories`
 // at the bottom of this file.
 
 export const galleryItems = [
+  // — Кујни —
   {
-    id: "kujna-moderna",
+    id: "kujna-sjajna-bela",
     category: "kujni",
-    image: "/gallery/01-kujna-moderna.svg",
-    title: "Модерна кујна",
-    width: 3200,
-    material: "Мат МДФ фронтови",
+    image: "/gallery/01-kujna-sjajna-bela.jpg",
+    title: "Кујна во сјаен бел лак",
+    width: 3600,
+    material: "Сјаен лак фронтови",
     description:
-      "Кујна по мерка со мат фронтови и скриени рачки. Работната плоча е отпорна на влага и топлина, а секој елемент е скроен според просторот.",
+      "Кујна со сјајни бели фронтови и вградени рерна и микробранова печка во иста колона. Работната плоча е во темна нијанса за контраст, а осветлувањето е вградено под горните елементи.",
   },
   {
-    id: "kujna-drvo",
+    id: "kujna-drvo-bez",
     category: "kujni",
-    image: "/gallery/02-kujna-drvo.svg",
-    title: "Кујна во масив",
-    width: 2800,
-    material: "Фурнир даб",
+    image: "/gallery/02-kujna-drvo-bez.jpg",
+    title: "Кујна во беж и дрвен декор",
+    width: 3100,
+    material: "Дрвен декор фронтови",
     description:
-      "Топол дрвен декор со видлива структура на фурнирот. Комбинација од затворени долни елементи и отворени полици за секојдневна употреба.",
+      "Комбинација од беж долни елементи и горни фронтови во дрвен декор, со гасов шпорет и гранитна работна плоча. Аспираторот е вграден под горните елементи за чист и прегледен изглед.",
+  },
+  {
+    id: "kujna-lak-lajsna",
+    category: "kujni",
+    image: "/gallery/03-kujna-lak-lajsna.jpg",
+    title: "Голема кујна во бел лак",
+    width: 3800,
+    material: "Сјаен лак, дрвена лајсна",
+    description:
+      "Аголна кујна во сјаен бел лак со дрвена лајсна меѓу горните и долните елементи. Висока колона со вградена рерна носи голем простор за складирање до плафон.",
+  },
+
+  // — Гардеробери —
+  {
+    id: "hol-garderoba",
+    category: "garderoberi",
+    image: "/gallery/04-hol-garderoba.jpg",
+    title: "Гардероба за влезен хол",
+    width: 2600,
+    material: "Плоча, огледало",
+    description:
+      "Аголно решение за влезен хол: гардеробер со огледални и полни врати, отворени полици и клупа со закачалки за палта. Сè е изработено во една линија, прилагодено на аголот на просторијата.",
+  },
+  {
+    id: "garderober-ogledalo",
+    category: "garderoberi",
+    image: "/gallery/05-garderober-ogledalo.jpg",
+    title: "Гардеробер со огледално крило",
+    width: 2200,
+    material: "Плоча 18 мм, огледало",
+    description:
+      "Гардеробер со крилни врати, од кои едната е целосно огледална. Долгите вертикални рачки во дрвен декор се протегаат по целата височина на вратите.",
   },
   {
     id: "garderober-lizgacki",
     category: "garderoberi",
-    image: "/gallery/03-garderober-lizgacki.svg",
+    image: "/gallery/06-garderober-lizgacki.jpg",
     title: "Гардеробер со лизгачки врати",
     width: 2400,
-    material: "Плоча 18 мм, огледало",
+    material: "Мат стакло, огледало",
     description:
-      "Гардеробер од под до плафон со лизгачки врати и огледало. Внатрешноста е поделена на прачки, фиоки и полици според потребите на семејството.",
+      "Лизгачки гардеробер во комбинација од мат затемнето стакло и огледало, со рамки во дрвен декор. Изработен по мерка на висината на просторијата, со ноќно шкафче во иста завршница.",
   },
   {
-    id: "garderober-agolen",
+    id: "garderober-vitrina",
     category: "garderoberi",
-    image: "/gallery/04-garderober-agolen.svg",
-    title: "Аголен гардеробер",
+    image: "/gallery/07-garderober-vitrina.jpg",
+    title: "Гардеробер со витрина",
+    width: 3200,
+    material: "Сјаен лак, стакло",
+    description:
+      "Гардеробер во сјаен бел лак со долги вертикални рачки, надополнет со висока витрина со стаклени врати и полици. Витрината е засебна целина што се вклопува точно до гардероберот.",
+  },
+
+  // — Соби —
+  {
+    id: "mladinska-soba",
+    category: "sobi",
+    image: "/gallery/08-mladinska-soba.jpg",
+    title: "Младинско креветче со шкафче",
+    width: 1000,
+    material: "Тапацирана табла",
+    description:
+      "Едно креветче со тапацирана табла и ноќно шкафче, изработени во иста нијанса за смирен, усогласен ентериер. Компактно решение за помала соба.",
+  },
+  {
+    id: "toaletna-masichka-lamelna",
+    category: "sobi",
+    image: "/gallery/09-toaletna-masichka-lamelna.jpg",
+    title: "Тоалетна масичка со ламели",
+    width: 1000,
+    material: "Ламелна фронта, огледало",
+    description:
+      "Висечка тоалетна масичка со фиока, вградена во панел со вертикални ламели во комбинација од графит и дрвен декор. Тркалезното огледало е монтирано директно на панелот.",
+  },
+  {
+    id: "krevet-boucle",
+    category: "sobi",
+    image: "/gallery/10-krevet-boucle.jpg",
+    title: "Тапациран кревет во букле",
     width: 1800,
-    material: "Плоча 18 мм",
+    material: "Букле текстил",
     description:
-      "Решение за аголен простор што го користи секој сантиметар. Меко затворање на вратите и осветлување во внатрешноста.",
+      "Кревет со целосно тапацирана рамка и канелирана табла во мек букле текстил. Изработен по мерка за поткровна спална соба со скошен таван.",
   },
   {
-    id: "spalna-soba",
+    id: "toaletna-masichka",
     category: "sobi",
-    image: "/gallery/05-spalna-soba.svg",
-    title: "Спална соба",
-    width: 1600,
-    material: "Тапациран кревет",
+    image: "/gallery/11-toaletna-masichka.jpg",
+    title: "Тоалетна масичка со тркалезно огледало",
+    width: 900,
+    material: "Дрвен фурнир, огледало",
     description:
-      "Комплет спална соба со тапациран кревет, ноќни шкафчиња и комода. Изработена во иста нијанса за мирен и усогласен ентериер.",
+      "Висечка тоалетна масичка со големо тркалезно огледало, монтирана во дрвен панел до креветот. Совршена комбинација со тапацираниот кревет во истата соба.",
   },
   {
-    id: "detska-soba",
+    id: "tv-zid-3d",
     category: "sobi",
-    image: "/gallery/06-detska-soba.svg",
-    title: "Детска соба",
-    width: 2200,
-    material: "Плоча 18 мм, заоблени рабови",
+    image: "/gallery/12-tv-zid-3d.jpg",
+    title: "ТВ ѕид со 3Д панели",
+    width: 3600,
+    material: "3Д панели, ЛЕД",
     description:
-      "Функционална детска соба со работен агол, полици за книги и простор за играчки. Заоблени рабови и материјали безбедни за деца.",
+      "Скулптурален ТВ ѕид составен од квадратни 3Д панели, со скриено ЛЕД осветлување во делови од композицијата. Нисок телевизиски елемент со фиоки стои под телевизорот.",
   },
   {
-    id: "dneven-boravok",
+    id: "detska-fudbal",
     category: "sobi",
-    image: "/gallery/07-dneven-boravok.svg",
-    title: "Дневна соба",
-    width: 3000,
-    material: "ТВ ѕид со ЛЕД",
+    image: "/gallery/13-detska-fudbal.jpg",
+    title: "Детска соба на фудбалска тема",
+    width: 2400,
+    material: "Плоча, тапацирано",
     description:
-      "ТВ ѕид со комбинација од затворени касети и отворени полици. Скриено водење на каблите и ЛЕД осветлување зад плочата.",
+      "Детска соба со тапацирано креветче во сина боја, отворена полица во жолто и гардеробер во истата палета. Ѕидниот принт е избран заедно со детето, а мебелот е прилагоден на темата.",
   },
+  {
+    id: "detsko-biro",
+    category: "sobi",
+    image: "/gallery/14-detsko-biro.jpg",
+    title: "Детско биро со ТВ ѕид",
+    width: 1400,
+    material: "Ламелна фронта",
+    description:
+      "Работен агол во истата детска соба: биро со фиоки под ѕид со вертикални ламели, на кој е монтиран телевизор. Практично место за учење и игри.",
+  },
+
+  // — Останато —
   {
     id: "trpezariska-masa",
     category: "ostanato",
-    image: "/gallery/08-trpezariska-masa.svg",
-    title: "Трпезариска маса",
+    image: "/gallery/15-trpezariska-masa.jpg",
+    title: "Трпезариска маса на масивна нога",
     width: 1800,
     material: "Масив и метал",
     description:
-      "Маса од масивно дрво со метална конструкција. Површината е заштитена со лак отпорен на дамки и секојдневно користење.",
+      "Трпезариска маса со скулптурална Х-нога од масивно дрво и стаклена површина. Изработена да биде централна точка во трпезаријата.",
   },
   {
-    id: "kancelariski-mebel",
+    id: "biblioteka",
     category: "ostanato",
-    image: "/gallery/09-kancelariski-mebel.svg",
-    title: "Канцелариски мебел",
-    width: 2600,
-    material: "Плоча 18 мм",
+    image: "/gallery/16-biblioteka.jpg",
+    title: "Библиотека од под до плафон",
+    width: 3400,
+    material: "Плоча, ламинат",
     description:
-      "Работни маси и ормани за канцеларија, изработени по мерка на просторот. Издржливи материјали за секојдневна работа.",
+      "Библиотечен ѕид составен од три сегменти, изработен точно по мерка на просторијата од под до плафон. Отворените полици носат целата домашна колекција од книги без да заземаат вишок простор.",
+  },
+  {
+    id: "raboten-biro",
+    category: "ostanato",
+    image: "/gallery/17-raboten-biro.jpg",
+    title: "Работна маса за домашна канцеларија",
+    width: 1800,
+    material: "Плоча, метални нозе",
+    description:
+      "Работна маса на тенки метални нозе, со засебен контејнер од шест фиоки вграден под едниот крај. Едноставна и функционална за домашна канцеларија.",
+  },
+  {
+    id: "polici-kosina",
+    category: "ostanato",
+    image: "/gallery/18-polici-kosina.jpg",
+    title: "Полици под скошен таван",
+    width: 1200,
+    material: "Плоча",
+    description:
+      "Вградени полици што го следат скошениот ѕид на поткровјето, со контрастна темна преграда и затворен простор за складирање под нив. Го искористуваат просторот што инаку би останал празен.",
+  },
+  {
+    id: "klupa-chekalna",
+    category: "ostanato",
+    image: "/gallery/19-klupa-chekalna.jpg",
+    title: "Клупа за деловна чекална",
+    width: 3000,
+    material: "Тапацирано, метал",
+    description:
+      "Модуларна тапацирана клупа околу централна саксија, изработена за чекална во деловен простор. Секој модул стои на засебни метални нозе за лесно преместување.",
   },
 ]
 

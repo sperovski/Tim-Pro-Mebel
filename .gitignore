@@ -3,3 +3,7 @@ dist
 .DS_Store
 *.local
 .vercel
+
+# Raw phone photos dropped in for the gallery — the processed, resized
+# versions actually used by the site live in public/gallery/.
+/pictures

@@ -10,6 +10,7 @@ import { useTilt } from "../hooks/useTilt"
  */
 export default function FlipCard({ item, index = 0, onOpen }) {
   const [flipped, setFlipped] = useState(false)
+  const [loaded, setLoaded] = useState(false)
   const tilt = useTilt(6)
 
   // Pointer events cover a cursor dragged across the grid; touch is left to
@@ -52,7 +53,18 @@ export default function FlipCard({ item, index = 0, onOpen }) {
         >
           <div className="flip-card-inner">
             <div className="flip-face bg-card">
-              <img src={item.image} alt={item.title} loading="lazy" className="size-full object-cover" />
+              {/* The photo eases in once it actually has pixels, instead of
+                  popping in mid-scroll — a plate settling, not a page jump. */}
+              <img
+                src={item.image}
+                alt={item.title}
+                loading="lazy"
+                decoding="async"
+                onLoad={() => setLoaded(true)}
+                className={`size-full object-cover transition-opacity duration-500 ease-out ${
+                  loaded ? "opacity-100" : "opacity-0"
+                }`}
+              />
               {/* Title block, as on a drawing: what it is, what it is made of. */}
               <div className="absolute inset-x-0 bottom-0 grid grid-cols-[1fr_auto] items-center gap-3 border-t border-ink bg-card px-3 py-2">
                 <h3 className="truncate font-semibold">{item.title}</h3>

@@ -1,18 +1,28 @@
 # Фотографии / Photos
 
-The `.svg` files here are placeholders so the site runs before the real photos
-are in place.
+Real job-site photos, resized to a 1400px long edge and re-encoded as
+progressive JPEG (~60–370KB each) — see `src/data/gallery.js` for the
+`{ id, category, image, title, width, material, description }` entry that
+points at each file.
 
-Facebook blocks automated downloads, so the real photos have to be saved by
-hand from the company page:
-https://www.facebook.com/people/Tim-ProMebel/100077423180264/?sk=photos
+## Adding another piece
 
-Steps:
-1. Open each photo, right-click → "Save image as…" into this folder.
-2. Name them descriptively in English, e.g. `kujna-moderna.jpg`.
-3. Update the `image` paths in `src/data/gallery.js` to match.
-4. Delete the placeholder `.svg` files (and `/public/hero.svg` once a real
-   hero photo replaces it).
-
-Keep photos around 1200px wide and compressed (~200–400KB) so the gallery
-stays fast.
+1. Drop the photo into this folder — portrait or landscape both work; the
+   gallery card crops to 4:3 with `object-cover`.
+2. Resize it first so the site stays fast. From the project root:
+   ```bash
+   python3 - <<'PY'
+   from PIL import Image, ImageOps
+   im = Image.open("path/to/photo.jpg")
+   im = ImageOps.exif_transpose(im).convert("RGB")
+   w, h = im.size
+   scale = 1400 / max(w, h)
+   if scale < 1:
+       im = im.resize((round(w * scale), round(h * scale)), Image.LANCZOS)
+   im.save("public/gallery/NN-name.jpg", "JPEG", quality=82, optimize=True, progressive=True)
+   PY
+   ```
+3. Add the matching entry to `galleryItems` in `src/data/gallery.js` — `width`
+   is the piece's real width in millimetres if you have it (it's printed on
+   the card as a dimension line); `category` must be one of the ids in
+   `categories` in the same file.

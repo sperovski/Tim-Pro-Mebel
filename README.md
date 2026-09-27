@@ -104,14 +104,12 @@ updates the counters and the cut list with it.
 
 ## Before going live
 
-- [ ] Save the real photos from the
-      [Facebook page](https://www.facebook.com/people/Tim-ProMebel/100077423180264/?sk=photos)
-      into `public/gallery/` — see the README there. Facebook blocks automated
-      downloads, so this step is manual.
-- [ ] Update `image` paths and the draft descriptions in `src/data/gallery.js`.
 - [ ] Replace the draft millimetre widths in `src/data/gallery.js` with the
-      real ones — they are printed on the cards as dimensions.
+      real ones — they're eyeballed from the photos, not measured, and they're
+      printed on the cards as dimensions.
 - [ ] Check the size ranges in the "Што изработуваме" legend in `About.jsx`.
+- [ ] More photos can go straight into `public/gallery/` — see the README
+      there for the resize step and the entry shape.
 - [ ] Fill in the real phone, email and address in `src/data/contact.js`
       (currently placeholders).
 - [ ] Check the About copy — years active and specialties are drafted from the
