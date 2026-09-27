@@ -1,0 +1,815 @@
+@import "tailwindcss";
+
+/* Tim ProMebel — the page is laid out as a joiner's measured drawing sheet.
+   Palette is unchanged; the drawing grammar is what carries the identity:
+   hairline ink lines, square corners, no drop shadows, and cinnamon used
+   for one thing only — measurements.
+
+   Motion follows the same rule. Nothing bounces or glows for its own sake:
+   lines draw themselves the way a pencil draws them, plates lift under the
+   pointer the way a sample board does when you pick it up, and the only
+   colour that moves is the colour that measures. */
+@theme {
+  --color-cream: #ede0d4;
+  --color-paper: #e6ccb2;
+  --color-caramel: #ddb892;
+  --color-mocha: #7f5539;
+  --color-cinnamon: #9c6644;
+  --color-cocoa: #694731;
+  --color-ink: #4c3526;
+  --color-card: #f7f1ec;
+
+  /* Manrope: a geometric, professional sans with full Cyrillic coverage —
+     the weight axis (200–800) carries the emphasis a display face needs,
+     in place of Archivo's stretch axis. */
+  --font-sans: Manrope, ui-sans-serif, system-ui, sans-serif;
+
+  /* Modular scale, 1.333 from a 17px base: 0.80 / 1.06 / 1.42 / 1.89 / 2.52 */
+  --text-note: 0.797rem;
+  --text-note--line-height: 1.5;
+  --text-body: 1.0625rem;
+  --text-lede: 1.416rem;
+  --text-title: 1.888rem;
+  --text-display: 2.517rem;
+
+  /* One easing for everything that moves: fast out, settles without bounce. */
+  --ease-sheet: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Registered so the conic border angle can actually be animated, rather than
+   snapping between keyframes. */
+@property --angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 4.5rem;
+  }
+
+  body {
+    background-color: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* Drawings measure in millimetres; digits have to line up. */
+  .num,
+  th,
+  td {
+    font-variant-numeric: tabular-nums;
+  }
+
+  ::selection {
+    background-color: var(--color-caramel);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-cinnamon);
+    outline-offset: 2px;
+  }
+
+  /* The sheet's own scrollbar, so the browser chrome stops being the one
+     rounded, blue-grey thing on the page. */
+  @supports selector(::-webkit-scrollbar) {
+    ::-webkit-scrollbar {
+      width: 11px;
+      height: 11px;
+    }
+    ::-webkit-scrollbar-track {
+      background-color: var(--color-paper);
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: color-mix(in srgb, var(--color-ink) 55%, transparent);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: var(--color-ink);
+    }
+  }
+}
+
+@layer components {
+  /* Keyboard first stop: parked off-sheet until it is tabbed to. */
+  .skip-link {
+    position: fixed;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: 60;
+    border: 1px solid var(--color-cream);
+    background-color: var(--color-ink);
+    color: var(--color-cream);
+    padding: 0.6rem 1rem;
+    font-size: var(--text-note);
+    translate: 0 -160%;
+    transition: translate 0.25s var(--ease-sheet);
+  }
+  .skip-link:focus-visible {
+    translate: 0 0;
+  }
+
+  /* The sheet: one continuous ground with a drafting margin down each side. */
+  .sheet {
+    margin-inline: auto;
+    max-width: 75rem;
+    padding-inline: 1rem;
+  }
+  @media (min-width: 640px) {
+    .sheet {
+      padding-inline: 2rem;
+    }
+  }
+
+  .headline {
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 0.98;
+    text-wrap: balance;
+  }
+
+  .prose-measure {
+    max-width: 62ch;
+  }
+
+  /* Dimension line: two rules with end ticks and the measurement in the gap.
+     Cinnamon means measurement and nothing else. */
+  .dim {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    color: var(--color-cinnamon);
+    font-size: var(--text-note);
+    letter-spacing: 0.06em;
+    font-variant-numeric: tabular-nums;
+  }
+  .dim-line {
+    position: relative;
+    height: 1px;
+    flex: 1;
+    background-color: currentColor;
+    transform: scaleX(var(--dim-scale, 1));
+    transition: transform 0.5s var(--ease-sheet);
+  }
+  .dim-line--start {
+    transform-origin: left;
+  }
+  .dim-line--end {
+    transform-origin: right;
+  }
+  .dim-line::before {
+    content: "";
+    position: absolute;
+    top: -4px;
+    height: 9px;
+    width: 1px;
+    background-color: currentColor;
+  }
+  .dim-line--start::before {
+    left: 0;
+  }
+  .dim-line--end::before {
+    right: 0;
+  }
+
+  /* Hairlines. A drawing has no 2px borders and no shadows. */
+  .rule {
+    height: 1px;
+    background-color: color-mix(in srgb, var(--color-ink) 22%, transparent);
+  }
+  .frame {
+    border: 1px solid var(--color-ink);
+  }
+  .frame-soft {
+    border: 1px solid color-mix(in srgb, var(--color-ink) 25%, transparent);
+  }
+
+  /* ---------------------------------------------------------------------
+     Buttons — uiverse.io patterns (shine sweep, wipe fill, drawn border,
+     animated conic edge), redrawn square and in the workshop's palette so
+     they read as pressed ink rather than as glass widgets.
+     --------------------------------------------------------------------- */
+  .btn {
+    position: relative;
+    isolation: isolate;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    overflow: hidden;
+    border: 1px solid var(--color-ink);
+    padding: 0.8rem 1.6rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    transition: background-color 0.18s, color 0.18s, transform 0.18s var(--ease-sheet);
+  }
+  .btn:active {
+    transform: translateY(1px);
+  }
+
+  /* Solid: the gloss of a freshly lacquered front passing across it. */
+  .btn-solid {
+    background-color: var(--color-ink);
+    color: var(--color-cream);
+  }
+  .btn-solid::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(
+      110deg,
+      transparent 28%,
+      color-mix(in srgb, var(--color-caramel) 60%, transparent) 48%,
+      transparent 68%
+    );
+    transform: translateX(-130%);
+    transition: transform 0.75s var(--ease-sheet);
+  }
+  .btn-solid:hover::after,
+  .btn-solid:focus-visible::after {
+    transform: translateX(130%);
+  }
+  .btn-solid:hover {
+    background-color: var(--color-cocoa);
+  }
+
+  /* Outline: the ink floods up from the bottom edge, like dipped stain. */
+  .btn-line {
+    background-color: transparent;
+    color: var(--color-ink);
+  }
+  .btn-line::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-color: var(--color-ink);
+    transform: translateY(101%);
+    transition: transform 0.36s var(--ease-sheet);
+  }
+  .btn-line:hover::before,
+  .btn-line:focus-visible::before {
+    transform: translateY(0);
+  }
+  .btn-line:hover,
+  .btn-line:focus-visible {
+    background-color: transparent;
+    color: var(--color-cream);
+  }
+
+  /* Drafting brackets: two corner Ls that grow into a full frame on hover —
+     the way a detail gets boxed on a drawing before it is called out. */
+  .btn-bracket {
+    border-color: transparent;
+    background-color: transparent;
+    color: var(--color-ink);
+  }
+  .btn-bracket::before,
+  .btn-bracket::after {
+    content: "";
+    position: absolute;
+    width: 0.9rem;
+    height: 0.9rem;
+    transition: width 0.34s var(--ease-sheet), height 0.34s var(--ease-sheet);
+  }
+  .btn-bracket::before {
+    top: 0;
+    left: 0;
+    border-top: 1px solid currentColor;
+    border-left: 1px solid currentColor;
+  }
+  .btn-bracket::after {
+    right: 0;
+    bottom: 0;
+    border-right: 1px solid currentColor;
+    border-bottom: 1px solid currentColor;
+  }
+  .btn-bracket:hover::before,
+  .btn-bracket:hover::after,
+  .btn-bracket:focus-visible::before,
+  .btn-bracket:focus-visible::after {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* The one animated edge on the page, kept for the single submit button:
+     a conic sweep travelling round a 1px border. */
+  .btn-conic {
+    position: relative;
+    isolation: isolate;
+    border: none;
+    padding: 1px;
+    background: conic-gradient(
+      from var(--angle),
+      transparent 0 62%,
+      color-mix(in srgb, var(--color-caramel) 70%, transparent) 78%,
+      var(--color-cream) 88%,
+      transparent 96% 100%
+    );
+    animation: spin-angle 4.2s linear infinite;
+  }
+  .btn-conic > span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    width: 100%;
+    background-color: var(--color-ink);
+    padding: 0.8rem 1.6rem;
+    font-weight: 600;
+    transition: background-color 0.2s;
+  }
+  .btn-conic:hover > span {
+    background-color: var(--color-cocoa);
+  }
+  .btn-conic[disabled] {
+    animation-duration: 1.1s;
+    cursor: progress;
+  }
+
+  /* Arrow that steps forward on hover — used where the label is a next step. */
+  .btn-arrow svg {
+    transition: transform 0.28s var(--ease-sheet);
+  }
+  .btn-arrow:hover svg,
+  .btn-arrow:focus-visible svg {
+    transform: translateX(4px);
+  }
+
+  .field {
+    width: 100%;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 35%, transparent);
+    background-color: var(--color-card);
+    padding: 0.7rem 0.85rem;
+    font: inherit;
+    font-size: var(--text-body);
+    transition: border-color 0.2s, box-shadow 0.25s var(--ease-sheet);
+  }
+  .field:focus {
+    border-color: var(--color-ink);
+    outline: none;
+    box-shadow: inset 0 -2px 0 0 var(--color-cinnamon);
+  }
+  .field::placeholder {
+    color: color-mix(in srgb, var(--color-ink) 45%, transparent);
+  }
+
+  /* Detail callout — the circled number a drawing uses to point at a detail.
+     Used only for the workshop process, which genuinely is a sequence. */
+  .callout {
+    position: relative;
+    display: grid;
+    place-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    flex-shrink: 0;
+    border: 1px solid var(--color-cinnamon);
+    border-radius: 999px;
+    color: var(--color-cinnamon);
+    font-size: var(--text-note);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  /* A single ring pulses out of the callout as its step scrolls into view. */
+  .callout::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border: 1px solid var(--color-cinnamon);
+    border-radius: inherit;
+    opacity: 0;
+  }
+  [data-reveal].revealed .callout::after {
+    animation: ring 1.1s var(--ease-sheet) 0.25s;
+  }
+  .step:hover .callout {
+    background-color: var(--color-cinnamon);
+    color: var(--color-card);
+  }
+
+  /* Section hatching, as used to mark a cut face or the ground line. */
+  .hatch {
+    background-image: repeating-linear-gradient(
+      45deg,
+      color-mix(in srgb, var(--color-ink) 35%, transparent) 0 1px,
+      transparent 1px 7px
+    );
+  }
+
+  /* Squared millimetre paper, panning slowly behind the hero drawing. */
+  .blueprint {
+    background-image:
+      linear-gradient(to right, color-mix(in srgb, var(--color-mocha) 16%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in srgb, var(--color-mocha) 16%, transparent) 1px, transparent 1px),
+      linear-gradient(to right, color-mix(in srgb, var(--color-mocha) 8%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in srgb, var(--color-mocha) 8%, transparent) 1px, transparent 1px);
+    background-size: 96px 96px, 96px 96px, 16px 16px, 16px 16px;
+    animation: pan 60s linear infinite;
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 45%, black 35%, transparent 100%);
+  }
+
+  /* Sawdust: a few motes drifting in the light over the hero. */
+  .mote {
+    position: absolute;
+    border-radius: 999px;
+    background-color: var(--color-mocha);
+    animation: drift linear infinite;
+  }
+
+  /* ---------------------------------------------------------------------
+     Gallery specimen: a square-cornered plate pinned to the sheet. It tilts
+     towards the pointer, catches a light spot where the pointer is, and
+     flips to the description — uiverse card behaviour, drawn flat.
+     --------------------------------------------------------------------- */
+  .plate {
+    transform: perspective(1100px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg))
+      translateY(var(--lift, 0px));
+    /* Slow enough to settle when the pointer leaves, fast enough that it does
+       not lag behind the pointer while it is over the plate. */
+    transition: transform 0.45s var(--ease-sheet);
+  }
+  .plate:hover {
+    transition: transform 0.12s linear;
+  }
+  .flip-card {
+    perspective: 1600px;
+  }
+  .flip-card-inner {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .flip-card[data-flipped="true"] .flip-card-inner {
+    transform: rotateY(180deg);
+  }
+  .flip-face {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border: 1px solid var(--color-ink);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  .flip-face-back {
+    transform: rotateY(180deg);
+  }
+  /* The light spot, sitting under the pointer. */
+  .spot {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      13rem circle at var(--sx, 50%) var(--sy, 50%),
+      color-mix(in srgb, white 55%, transparent),
+      transparent 70%
+    );
+    opacity: 0;
+    mix-blend-mode: soft-light;
+    transition: opacity 0.3s;
+  }
+  .plate:hover .spot {
+    opacity: 1;
+  }
+  /* Corner ticks that appear on the plate, as if it were being registered.
+     They move with the `translate` property, not `transform`, so the plate's
+     own tilt transform stays untouched. */
+  .plate-ticks span {
+    position: absolute;
+    width: 0.7rem;
+    height: 0.7rem;
+    opacity: 0;
+    transition: opacity 0.25s, translate 0.35s var(--ease-sheet);
+  }
+  .plate-ticks span:first-child {
+    top: -6px;
+    left: -6px;
+    border-top: 1px solid var(--color-cinnamon);
+    border-left: 1px solid var(--color-cinnamon);
+    translate: 6px 6px;
+  }
+  .plate-ticks span:last-child {
+    right: -6px;
+    bottom: -6px;
+    border-right: 1px solid var(--color-cinnamon);
+    border-bottom: 1px solid var(--color-cinnamon);
+    translate: -6px -6px;
+  }
+  .plate:hover .plate-ticks span {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  /* Filter chips: the fill slides in from the left, label inverts. */
+  .chip {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 30%, transparent);
+    padding: 0.35rem 0.9rem;
+    font-size: var(--text-note);
+    letter-spacing: 0.02em;
+    transition: color 0.25s, border-color 0.25s;
+  }
+  .chip::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-color: var(--color-ink);
+    transform: translateX(-101%);
+    transition: transform 0.32s var(--ease-sheet);
+  }
+  .chip:hover {
+    border-color: var(--color-ink);
+  }
+  .chip[aria-pressed="true"] {
+    border-color: var(--color-ink);
+    color: var(--color-cream);
+  }
+  .chip[aria-pressed="true"]::before {
+    transform: translateX(0);
+  }
+
+  /* Marquee of materials, running like a cut list along a bench. */
+  .marquee {
+    overflow: hidden;
+    mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  }
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee 34s linear infinite;
+  }
+  .marquee:hover .marquee-track,
+  .marquee:focus-within .marquee-track {
+    animation-play-state: paused;
+  }
+
+  /* Accordion, opened by animating the row from 0fr to 1fr. */
+  .fold {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.4s var(--ease-sheet);
+  }
+  .fold > div {
+    overflow: hidden;
+  }
+  .fold[data-open="true"] {
+    grid-template-rows: 1fr;
+  }
+  .fold-mark {
+    position: relative;
+    width: 0.75rem;
+    height: 1px;
+    flex-shrink: 0;
+    background-color: currentColor;
+  }
+  .fold-mark::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: currentColor;
+    transform: rotate(90deg);
+    transition: transform 0.35s var(--ease-sheet), opacity 0.3s;
+  }
+  [data-open="true"] .fold-mark::after {
+    transform: rotate(0deg);
+    opacity: 0;
+  }
+
+  /* Underline that grows from the left — nav links and inline links. */
+  .link-draw {
+    position: relative;
+    padding-bottom: 0.15rem;
+  }
+  .link-draw::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 1px;
+    background-color: currentColor;
+    transform: scaleX(var(--u, 0));
+    transform-origin: left;
+    transition: transform 0.3s var(--ease-sheet);
+  }
+  .link-draw:hover,
+  .link-draw:focus-visible {
+    --u: 1;
+  }
+  .link-draw[aria-current="true"] {
+    --u: 1;
+  }
+}
+
+/* =========================================================================
+   Motion
+   ========================================================================= */
+
+/* The hero elevation draws itself once. */
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw 1.1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes ink-in {
+  to {
+    opacity: 1;
+  }
+}
+.ink-in {
+  opacity: 0;
+  animation: ink-in 0.5s ease forwards;
+}
+
+@keyframes spin-angle {
+  to {
+    --angle: 360deg;
+  }
+}
+
+@keyframes pan {
+  to {
+    background-position: 96px 96px, 96px 96px, 16px 16px, 16px 16px;
+  }
+}
+
+@keyframes drift {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.35;
+  }
+  85% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: translate3d(var(--dx, 18px), -120px, 0);
+    opacity: 0;
+  }
+}
+
+/* The plate being lifted off the sheet: the lightbox arriving. */
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+  }
+}
+.pop-in {
+  animation: pop 0.34s var(--ease-sheet) both;
+}
+
+@keyframes ring {
+  from {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(2.1);
+  }
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Blade: the submit button's working state — a kerf travelling across. */
+@keyframes kerf {
+  to {
+    transform: translateX(100%);
+  }
+}
+.kerf::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--color-caramel) 45%, transparent),
+    transparent
+  );
+  transform: translateX(-100%);
+  animation: kerf 1s linear infinite;
+}
+
+@keyframes check {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.check-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: check 0.45s var(--ease-sheet) forwards;
+}
+
+/* -------------------------------------------------------------------------
+   Scroll reveal. Gated on .js so the page is never left blank if the script
+   does not run; the observer that adds .revealed lives in useScrollReveal.
+   ------------------------------------------------------------------------- */
+.js [data-reveal] {
+  transition: opacity 0.7s var(--ease-sheet), transform 0.7s var(--ease-sheet),
+    clip-path 0.8s var(--ease-sheet);
+  transition-delay: var(--d, 0ms);
+}
+.js [data-reveal="up"] {
+  opacity: 0;
+  transform: translateY(20px);
+}
+.js [data-reveal="left"] {
+  opacity: 0;
+  transform: translateX(-24px);
+}
+.js [data-reveal="right"] {
+  opacity: 0;
+  transform: translateX(24px);
+}
+.js [data-reveal="fade"] {
+  opacity: 0;
+}
+/* A rule that draws itself across the sheet, left to right. */
+.js [data-reveal="rule"] {
+  transform: scaleX(0);
+  transform-origin: left;
+}
+/* A plate that gets wiped in, like a photo being laid down. */
+.js [data-reveal="wipe"] {
+  clip-path: inset(0 0 100% 0);
+}
+.js [data-reveal].revealed {
+  opacity: 1;
+  transform: none;
+  clip-path: inset(0 0 0 0);
+}
+
+/* Every dimension under a revealed plate draws out from its own end tick,
+   a beat after the plate itself has landed. */
+.js [data-reveal] .dim-line {
+  --dim-scale: 0;
+}
+.js [data-reveal].revealed .dim-line {
+  --dim-scale: 1;
+  transition-delay: calc(var(--d, 0ms) + 260ms);
+}
+
+/* -------------------------------------------------------------------------
+   Reduced motion: keep every state, remove every movement.
+   ------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+  .draw,
+  .check-draw {
+    stroke-dashoffset: 0;
+  }
+  .ink-in {
+    opacity: 1;
+  }
+  .js [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+  }
+  .js [data-reveal] .dim-line {
+    --dim-scale: 1;
+  }
+  .plate {
+    transform: none !important;
+  }
+  .mote,
+  .blueprint {
+    display: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}

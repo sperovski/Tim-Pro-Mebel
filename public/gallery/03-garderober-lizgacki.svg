@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600" role="img" aria-label="Гардеробер">
+  <rect width="800" height="600" fill="#ddb892"/>
+  <g fill="#694731" opacity="0.28">
+    <rect x="90" y="150" width="620" height="60" rx="10"/>
+    <rect x="120" y="230" width="250" height="220" rx="10"/>
+    <rect x="400" y="230" width="280" height="140" rx="10"/>
+    <rect x="400" y="390" width="280" height="60" rx="10"/>
+    <circle cx="245" cy="340" r="14"/>
+    <circle cx="540" cy="300" r="14"/>
+  </g>
+  <rect x="24" y="24" width="752" height="552" rx="24" fill="none" stroke="#4c3526" stroke-width="6"/>
+  <text x="400" y="520" text-anchor="middle" font-family="Georgia, serif" font-size="40" fill="#4c3526">Гардеробер</text>
+  <text x="400" y="556" text-anchor="middle" font-family="system-ui, sans-serif" font-size="20" fill="#4c3526" opacity="0.6">заменете со фотографија</text>
+</svg>
