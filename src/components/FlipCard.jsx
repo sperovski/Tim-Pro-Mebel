@@ -3,15 +3,23 @@ import { useTilt } from "../hooks/useTilt"
 
 const ROTATE_MS = 3200
 
+// One plate size for the whole sheet. Letting each plate take its own photo's
+// proportions meant a 630×1400 shot sat beside a 1050×1400 one with nothing
+// lining up — specimens scattered across the sheet rather than set out on it.
+// A drawing sheet lays its specimens out on a consistent grid, so every plate
+// is cut to the same 3:4 and the rows line up. The photos are all portrait, so
+// this crops far less than a landscape box would, and the magnifier still
+// opens each piece uncropped.
+const PLATE_ASPECT = "3/4"
+
 /**
  * A piece shown as a specimen on the sheet: the photo with a title block under
- * it, and its real width dimensioned below the plate. The plate is shaped to
- * its own photo's aspect ratio rather than a fixed box, so nothing gets
- * cropped to fit. Where a job has more than one photo, the plate cycles
- * between them — a sheet counter ("1/2") in the corner doubles as a manual
- * advance. The plate leans towards the pointer and catches a light spot where
- * the pointer is; it flips to the description on hover, on tap and on
- * keyboard focus, and the magnifier in the corner opens the full plate.
+ * it, and its real width dimensioned below the plate. Where a job has more
+ * than one photo, the plate cycles between them — a sheet counter ("1/2") in
+ * the corner doubles as a manual advance. The plate leans towards the pointer
+ * and catches a light spot where the pointer is; it flips to the description
+ * on hover, on tap and on keyboard focus, and the magnifier in the corner
+ * opens the full plate.
  */
 export default function FlipCard({ item, index = 0, onOpen }) {
   const [flipped, setFlipped] = useState(false)
@@ -39,7 +47,7 @@ export default function FlipCard({ item, index = 0, onOpen }) {
   }, [multi, item.images.length])
 
   return (
-    <figure className="mb-10 break-inside-avoid" data-reveal="up" style={{ "--d": `${(index % 3) * 90}ms` }}>
+    <figure data-reveal="up" style={{ "--d": `${(index % 3) * 90}ms` }}>
       <div
         ref={tilt.ref}
         className="plate relative"
@@ -55,7 +63,7 @@ export default function FlipCard({ item, index = 0, onOpen }) {
       >
         <div
           className="flip-card w-full cursor-pointer"
-          style={{ aspectRatio: item.aspect }}
+          style={{ aspectRatio: PLATE_ASPECT }}
           data-flipped={flipped}
           role="button"
           tabIndex={0}
@@ -95,10 +103,12 @@ export default function FlipCard({ item, index = 0, onOpen }) {
                   />
                 ))}
               </div>
-              {/* Title block, as on a drawing: what it is, what it is made of. */}
-              <div className="absolute inset-x-0 bottom-0 grid grid-cols-[1fr_auto] items-center gap-3 border-t border-ink bg-card px-3 py-2">
-                <h3 className="truncate font-semibold">{item.title}</h3>
-                <span className="text-note text-ink/60">{item.material}</span>
+              {/* Title block, as on a drawing: what it is, what it is made of.
+                  Stacked rather than side by side — sharing one line meant
+                  titles this long got cut off mid-word. */}
+              <div className="absolute inset-x-0 bottom-0 border-t border-ink bg-card px-3 py-2">
+                <h3 className="line-clamp-2 font-semibold leading-snug">{item.title}</h3>
+                <p className="truncate text-note text-ink/60">{item.material}</p>
               </div>
             </div>
 
